@@ -1,0 +1,205 @@
+---
+title: "Task 4 analysis"
+output: html_document
+date: "2023-04-13"
+---
+
+```{r}
+library(tidyverse)
+library(here)
+```
+
+```{r}
+read_csv(here("clean_data/candy_2015_to_2017.csv"))
+```
+
+### Question 1:
+# What is the total number of candy ratings given across the three years. (Number of candy ratings, not the number of raters. Don’t count missing values)
+```{r}
+# Specify the columns to include for counting candy ratings
+candy_columns <- setdiff(colnames(candy_2015_to_2017), c("age", "year", "gender", "trick_or_treating", "country", "X"))
+
+# Loop through the candy columns and count non-NA values
+candy_counts <- numeric(length(candy_columns))
+for (i in seq_along(candy_columns)) {
+  candy_counts[i] <- sum(!is.na(candy_2015_to_2017[[candy_columns[i]]]))
+}
+
+# Create a data frame with column names and corresponding candy counts
+candy_counts_df <- data.frame(Candy_Column = candy_columns, Count = candy_counts)
+
+total_ratings <- candy_counts_df %>% 
+  summarise(sum(Count))
+
+total_ratings
+```
+ 
+# There are 598877	ratings 
+
+### Question 2:
+# What was the average age of people who are going out trick or treating?
+
+```{r}
+average_age_trick_or_treating <- candy_2015_to_2017 %>%
+  filter(trick_or_treating == "Yes") %>%
+  summarise(average_age = mean(age, na.rm = TRUE))
+
+average_age_trick_or_treating 
+```
+# The average age of people going trick or treating is 35
+
+
+## Question 3:
+# What was the average age of people who are not going trick or treating?
+```{r}
+average_age_not_trick_or_treating <- candy_2015_to_2017 %>%
+  filter(trick_or_treating == "No") %>%
+  summarise(average_age = mean(age, na.rm = TRUE))
+
+average_age_not_trick_or_treating 
+```
+# The average age of people NOT going trick or treating is 39
+
+## Question 4:
+#For each of joy, despair and meh, which candy bar received the most of these ratings
+```{r}
+candy_columns <- setdiff(colnames(candy_2015_to_2017), c("age", "year", "gender", "trick_or_treating", "country", "X"))
+
+# Loop through the candy columns and count "joy", "despair", and "meh" ratings
+joy_counts <- numeric(length(candy_columns))
+despair_counts <- numeric(length(candy_columns))
+meh_counts <- numeric(length(candy_columns))
+
+for (i in seq_along(candy_columns)) {
+  joy_counts[i] <- sum(candy_2015_to_2017[[candy_columns[i]]] == "JOY", na.rm = TRUE)
+  despair_counts[i] <- sum(candy_2015_to_2017[[candy_columns[i]]] == "DESPAIR", na.rm = TRUE)
+  meh_counts[i] <- sum(candy_2015_to_2017[[candy_columns[i]]] == "MEH", na.rm = TRUE)
+}
+
+# Create a data frame with column names and corresponding counts for "joy", "despair", and "meh" ratings
+ratings_counts_df <- data.frame(Candy_Column = candy_columns, Joy_Count = joy_counts, Despair_Count = despair_counts, Meh_Count = meh_counts)
+
+# Find the candy column with the most "joy" ratings
+most_joy_candy <- ratings_counts_df %>%
+  filter(Joy_Count == max(Joy_Count)) %>%
+  select(Candy_Column)
+
+# Find the candy column with the most "despair" ratings
+most_despair_candy <- ratings_counts_df %>%
+  filter(Despair_Count == max(Despair_Count)) %>%
+  select(Candy_Column)
+
+# Find the candy column with the most "meh" ratings
+most_meh_candy <- ratings_counts_df %>%
+  filter(Meh_Count == max(Meh_Count)) %>%
+  select(Candy_Column)
+
+cat("Candy bar with the most 'joy' ratings:", most_joy_candy$Candy_Column, "\n")
+cat("Candy bar with the most 'despair' ratings:", most_despair_candy$Candy_Column, "\n")
+cat("Candy bar with the most 'meh' ratings:", most_meh_candy$Candy_Column, "\n")
+
+```
+
+## Question 5: 
+# How many people rated Starburst as despair?
+```{r}
+# Filter rows where candy column "starburst" has value "despair"
+despair_starburst_count <- sum(candy_2015_to_2017$starburst == "DESPAIR", na.rm = TRUE)
+
+# Display the count
+cat("Number of people who rated starburst as 'despair':", despair_starburst_count, "\n")
+```
+
+## For the next three questions, count despair as -1, joy as +1, and meh as 0.
+
+## Question 6: What was the most popular candy bar by this rating system for each gender in the dataset ?
+
+```{r}
+# Filter out irrelevant columns
+candy_data <- candy_2015_to_2017 %>%
+  select(-year, -age, -trick_or_treating, -country, -X)
+
+# Replace candy ratings with numeric values
+rating_values <- c("JOY" = 1, "DESPAIR" = -1, "MEH" = 0)
+for (col in colnames(candy_data)) {
+  if (col != "gender") {
+    candy_data[[col]] <- recode(candy_data[[col]], !!!rating_values)
+  }
+}
+
+# Group by gender and calculate sum of ratings for all columns
+candy_data <- candy_data %>%
+  group_by(gender) %>%
+  summarize(across(everything(), ~sum(., na.rm = TRUE)))
+
+# Find the most popular candy bar for each gender
+most_popular_candy_gender <- candy_data %>%
+  pivot_longer(cols = -gender, names_to = "candy", values_to = "sum_ratings") %>%
+  group_by(gender) %>%
+  filter(sum_ratings == max(sum_ratings, na.rm = TRUE)) %>%
+  select(gender, candy)
+
+# Print the results
+print(most_popular_candy_gender)
+```
+## Question 7: What was the most popular candy bar in each year?
+```{r}
+# Filter out irrelevant columns
+candy_data <- candy_2015_to_2017 %>%
+  select(-gender, -age, -trick_or_treating, -country, -X)
+
+# Replace candy ratings with numeric values
+rating_values <- c("JOY" = 1, "DESPAIR" = -1, "MEH" = 0)
+for (col in colnames(candy_data)) {
+  if (col != "year") {
+    candy_data[[col]] <- recode(candy_data[[col]], !!!rating_values)
+  }
+}
+
+# Group by year and calculate sum of ratings for all columns
+candy_data <- candy_data %>%
+  group_by(year) %>%
+  summarize(across(everything(), ~sum(., na.rm = TRUE)))
+
+# Find the most popular candy bar for each year
+most_popular_candy_year <- candy_data %>%
+  pivot_longer(cols = -year, names_to = "candy", values_to = "sum_ratings") %>%
+  group_by(year) %>%
+  filter(sum_ratings == max(sum_ratings, na.rm = TRUE)) %>%
+  select(year, candy)
+
+# Print the results
+print(most_popular_candy_year)
+```
+
+## Question 8
+```{r}
+# Filter out irrelevant columns
+candy_data <- candy_2015_to_2017 %>%
+  select(-year, -age, -gender, -trick_or_treating, -X)
+
+# Replace candy ratings with numeric values
+rating_values <- c("JOY" = 1, "DESPAIR" = -1, "MEH" = 0)
+for (col in colnames(candy_data)) {
+  if (col != "country") {
+    candy_data[[col]] <- recode(candy_data[[col]], !!!rating_values)
+  }
+}
+
+# Group by country and calculate sum of ratings for all columns
+candy_data <- candy_data %>%
+  group_by(country) %>%
+  summarize(across(everything(), ~sum(., na.rm = TRUE)))
+
+# Find the most popular candy bar for each country
+most_popular_candy <- candy_data %>%
+  pivot_longer(cols = -country, names_to = "candy", values_to = "sum_ratings") %>%
+  group_by(country) %>%
+  filter(sum_ratings == max(sum_ratings, na.rm = TRUE)) %>%
+  slice(1) %>%
+  select(country, candy)
+
+# Print the results
+print(most_popular_candy)
+```
+

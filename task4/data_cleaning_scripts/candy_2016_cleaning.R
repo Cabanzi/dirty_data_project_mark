@@ -2,9 +2,10 @@ library(tidyverse)
 library(janitor)
 library(readxl)
 library(lubridate)
+library(here)
 
 
-candy_2016 <- read_excel("raw_data/candy_ranking_data/boing-boing-candy-2016.xlsx")  
+candy_2016 <- read_excel(here("raw_data/candy_ranking_data/boing-boing-candy-2016.xlsx"))  
 
 
 #------------------------ Creating a "year" column -----------------------------
@@ -22,19 +23,18 @@ candy_2016 <- candy_2016 %>%
 
 
 #------------------------ Creating an "age" column -----------------------------
-
 candy_2016 <- candy_2016 %>%
   rename("age" = "How old are you?") %>%
   mutate(age = ifelse(grepl("^\\d+\\.\\d+$", age), as.numeric(age), NA)) %>%
   mutate(age = ifelse(age > 116, NA, round(age, 0))) 
 
- 
-candy_2016 <- candy_2016 %>% 
+#-------------------------------------------------------------------------------
+  candy_2016 <- candy_2016 %>% 
   rename("country" = "Which country do you live in?",
-         "trick or treating?" = "Are you going actually going trick or treating yourself?")
+         "trick or treating?" = "Are you going actually going trick or treating yourself?",
+         "gender" = "Your gender:")
 
 #----------------- Standardising "country" column -----------------------------
-
 # Define a mapping of country names to their standardized form
 country_mapping <- c("Canada" = "Canada",
                      "usa" = "United States of America",
@@ -109,8 +109,8 @@ candy_2016 <- candy_2016 %>%
 
 candy_2016 <- candy_2016 %>% 
   select( 
-    -c( "Your gender:",
-        "Which state, province, county do you live in?",
+    -c( 
+      "Which state, province, county do you live in?",
         "Any full-sized candy bar", 
         "Anonymous brown globs that come in black and orange wrappers",
         "Broken glow stick",
@@ -142,7 +142,6 @@ candy_2016 <- candy_2016 %>%
         "When you see the above image of the 4 different websites, which one would you most likely check out (please be honest).",
         "York Peppermint Patties",
         "Person of Interest Season 3 DVD Box Set (not including Disc 4 with hilarious outtakes)",
-        "Reggie Jackson Bar",
         "Those odd marshmallow circus peanut things",
         "Vials of pure high fructose corn syrup, for main-lining into your vein",
         "Vicodin",
@@ -160,24 +159,21 @@ candy_2016 <- candy_2016 %>%
     ))
 
 
-
 candy_2016 <- candy_2016 %>%
   rename( 
     "Bonkers" = "Bonkers (the candy)",
     "Chick-o-Sticks" = "Chick-o-Sticks (we don’t know what that is)",
     "Fruit" =  "Healthy Fruit", 
     "Licorice" = "Licorice (yes black)",
-    "Sourpatch kids" = "Sourpatch Kids (i.e. abominations of nature)",
+    "Sourpatch kids" = "So urpatch Kids (i.e. abominations of nature)",
     "Sweetums" = "Sweetums (a friend to diabetes)",
-    "Tolberone" = "Tolberone something or other" 
+    "Tolberone" = "Tolberone something or other",
+    "Gummy Bears" = "Gummy Bears straight up"
   )
 
-
 candy_2016 <- candy_2016 %>% 
-  select(year, age, `trick or treating?`, country, everything())
-
+  select(year, age, gender, `trick or treating?`, country, everything())
 
 candy_2016 <- janitor::clean_names(candy_2016)
-
 
 write.csv(candy_2016, "clean_data/candy_2016.csv")

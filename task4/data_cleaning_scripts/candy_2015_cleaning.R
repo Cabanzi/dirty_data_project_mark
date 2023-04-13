@@ -1,10 +1,10 @@
-
 library(tidyverse)
 library(janitor)
 library(readxl)
 library(lubridate)
+library(here)
 
-candy_2015 <- read_excel("raw_data/candy_ranking_data/boing-boing-candy-2015.xlsx") 
+candy_2015 <- read_excel(here("raw_data/candy_ranking_data/boing-boing-candy-2015.xlsx"))
 
 
 #------------------------ Creating a "year" column -----------------------------
@@ -34,8 +34,8 @@ candy_2015 <- candy_2015 %>%
 candy_2015 <- candy_2015 %>%
   mutate(age = ifelse(age > 116, NA, round(age, 0)))
 
-#------------- Cleaning columns/ removing anything that's `NOT` candy ----------
 
+#------------- Cleaning columns/ removing anything that's `NOT` candy ----------
 candy_2015 <- candy_2015 %>% 
   rename(
     "trick or treating?" = 
@@ -43,10 +43,8 @@ candy_2015 <- candy_2015 %>%
     )
 
 
-
 candy_2015 <- candy_2015 %>%
   rename_all(~str_remove_all(., "\\[|\\]"))
-
 
 
 candy_2015 <- candy_2015 %>%
@@ -97,8 +95,8 @@ candy_2015 <- candy_2015 %>%
         "Please estimate the degrees of separation you have from the following folks Beyoncé Knowles",
         "Which day do you prefer, Friday or Sunday?",
         "JoyJoy (Mit Iodine)", 
+        "Spotted Dick"
             ))
-
 
 
 candy_2015 <- candy_2015 %>% 
@@ -109,12 +107,8 @@ candy_2015 <- candy_2015 %>%
     `Sea-salt Chocolate` = "Sea-salt flavored stuff, probably chocolate, since this is the \"it\" flavor of the year"
   )
 
-    
 
 candy_2015 <- janitor::clean_names(candy_2015)
-
-
-
 
 
 write.csv(candy_2015, "clean_data/candy_2015.csv")

@@ -1,0 +1,47 @@
+---
+title: "decathlon_report"
+output: html_document
+date: "2023-04-13"
+---
+
+##Introduction to the Dataset
+
+In this project, I analyzed a dataset containing decathlon results from the olympics and decastar. The dataset includes information on athletes results in the various disciplines in decathlon from both competitions. 
+
+##Assumptions
+
+* The data recorded from these events are accrurate.
+
+
+
+## Cleaning the data
+
+The following cleaning was done. 
+
+* Athlete row names were converted into "athlete_name" column
+* names were cleaned using janitor function 
+
+## Answers 
+1.Who had the longest long jump seen in the data?
+`Clay registered the longest jump at 7.96m at the Olympics `
+
+2.What was the average 100m time in each competition?
+`Decastar:	11.18`			
+`OlympicG:	10.92`
+
+3.Who had the highest total points across both competitions?
+`Decastar	sebrle	8217`		
+`OlympicG	sebrle	8893`	
+
+4.What was the shot-put scores for the top three competitors in each competition?
+`yurkov	15.19	Decastar`		
+`sebrle	14.83	Decastar`		
+`karpov	14.77	Decastar`		
+`sebrle	16.36	OlympicG`		
+`karpov	15.93	OlympicG`		
+`macey	15.73	OlympicG`
+
+5.What was the average points for competitors who ran the 400m in less than 50 seconds vs. those than ran 400m in more than 50 seconds?
+`Competition  avg_points_above_50_runners            avg_points_sub_50_runners`
+`Decastar	       7721.00	                           7988.11`		
+`OlympicG	       7730.25	                           8180.05`		

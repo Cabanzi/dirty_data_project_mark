@@ -1,0 +1,75 @@
+---
+title: "candy_report"
+output: html_document
+date: "2023-04-13"
+---
+
+##Introduction to the Dataset
+
+In this project, I analyzed a dataset containing candy ratings from 2015 to 2017. The dataset includes information on candy ratings from various countries, with columns representing different attributes such as country, candy type, and ratings.
+
+##Assumptions
+
+* The rating values provided in the dataset are accurate and represent the true feelings of the particpant.
+* The dataset represents a random and unbiased sample of candy ratings from different countries.
+
+
+## Cleaning the data
+
+The first thing I did to clean the data was to make 3 individual csv files. 
+
+* For each of these files I did the following:
+* Added a "year" column 
+* Created an age column. I set a limit of 116 (The age of the worlds oldest person as of 04/23)
+* I standardised the country column so that their were not multiple names of the same country. 
+* I then shifted through all the candy names so that they were properly labeled and removed anything that I did not feel was candy. I used google to verify the results.
+
+## Answers
+1. What is the total number of candy ratings given across the three years. (Number of candy ratings, not the number of raters. Don’t count missing values)
+`598877`
+
+2. What was the average age of people who are going out trick or treating?
+`The average age of people going trick or treating is 35`
+
+3. What was the average age of people who are not going trick or treating?
+`The average age of people NOT going trick or treating is 39`
+
+4. For each of joy, despair and meh, which candy bar received the most of these ratings?
+`Candy bar with the most 'joy' ratings: reese_s_peanut_butter_cups `
+`Candy bar with the most 'despair' ratings: gum_from_baseball_cards` 
+`Candy bar with the most 'meh' ratings: lollipops`
+
+5. How many people rated Starburst as despair?
+`Number of people who rated starburst as 'despair': 1990 `
+
+For the next three questions, count despair as -1, joy as +1, and meh as 0.
+
+6. What was the most popular candy bar by this rating system for each gender in the dataset ?
+`Female:	reese_s_peanut_butter_cups`
+`Male:	reese_s_peanut_butter_cups`	
+`I'd rather not say:	kit_kat	`		
+`Other:	twix`
+
+7. What was the most popular candy bar in each year?
+`2015	reese_s_peanut_butter_cups	`		
+`2016	kit_kat	`		
+`2017	reese_s_peanut_butter_cups`
+
+8. What was the most popular candy bar by this rating for people in US, Canada, UK, and all other countries?
+`Australia:	                  caramellos`			
+`Austria:	                    x100_grand_bar`			
+`Belgium:	                    fruit`			
+`Canada:	                    kit_kat`			
+`CroatiaL:	                  butterfinger`			
+`France:	                    milky_way	`		
+`Germany:	                    butterfinger`			
+`Hungary:	                    caramellos`			
+`Japan:	                      kit_kat`		
+`New Zealand:	                kit_kat`			
+`Panama:	                    cadbury_creme_eggs`			
+`Portugal:	                  bottle_caps`		
+`South Korea: 	              butterfinger`			
+`Spain:	                      butterfinger`			
+`Switzerland:	                butterfinger`			
+`United Kingdom:	            lindt_truffle`			
+`United States of America:	  reese_s_peanut_butter_cups`
